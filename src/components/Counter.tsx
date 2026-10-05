@@ -1,5 +1,5 @@
-import { useAppDispatch, useAppSelector } from './store/hooks';
-import { counterActions } from './store/index';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { counterActions } from '../store/counter';
 import classes from './Counter.module.css';
 
 const Counter = () => {
