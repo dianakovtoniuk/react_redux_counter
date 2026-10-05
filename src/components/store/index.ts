@@ -1,39 +1,61 @@
-import { createStore } from 'redux';
+import { createSlice, configureStore } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 interface CounterState {
   counter: number;
   showCounter: boolean;
 }
 
-type CounterAction =
-  | { type: 'increment' }
-  | { type: 'increase'; amount: number }
-  | { type: 'decrement' }
-  | { type: 'toggle' };
+interface AuthState {
+  isAuthenticated: boolean;
+}
 
-const initialState: CounterState = { counter: 0, showCounter: true };
+const initialCounterState: CounterState = { counter: 0, showCounter: true };
 
-const counterReducer = (
-  state: CounterState = initialState,
-  action: CounterAction
-): CounterState => {
-  switch (action.type) {
-    case 'increment':
-      return { ...state, counter: state.counter + 1 };
-    case 'increase':
-      return { ...state, counter: state.counter + action.amount };
-    case 'decrement':
-      return { ...state, counter: state.counter - 1 };
-    case 'toggle':
-      return { ...state, showCounter: !state.showCounter };
-    default:
-      return state;
-  }
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: initialCounterState,
+  reducers: {
+    increment(state) {
+      state.counter++;
+    },
+    decrement(state) {
+      state.counter--;
+    },
+    increase(state, action: PayloadAction<number>) {
+      state.counter = state.counter + action.payload;
+    },
+    toggleCounter(state) {
+      state.showCounter = !state.showCounter;
+    },
+  },
+});
+
+const initialAuthState: AuthState = {
+  isAuthenticated: false,
 };
 
-const store = createStore(counterReducer);
+const authSlice = createSlice({
+  name: 'authentication',
+  initialState: initialAuthState,
+  reducers: {
+    login(state) {
+      state.isAuthenticated = true;
+    },
+    logout(state) {
+      state.isAuthenticated = false;
+    },
+  },
+});
+
+const store = configureStore({
+  reducer: { counter: counterSlice.reducer, auth: authSlice.reducer },
+});
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+export const counterActions = counterSlice.actions;
+export const authActions = authSlice.actions;
 
 export default store;
